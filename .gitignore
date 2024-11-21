@@ -1,0 +1,9 @@
+node_modules/
+file_operations.log
+package-lock.json
+__pycache__
+.DS_Store
+.idea/
+file_storage/
+.vscode
+.env
