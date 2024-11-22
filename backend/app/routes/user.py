@@ -31,6 +31,27 @@ router = APIRouter(
 )
 
 
+# @router.post(
+#     "/register",
+#     response_model=UserResponseSchema,
+#     status_code=status.HTTP_201_CREATED
+# )
+# async def register(
+#         user_in: RegisterSchema,
+#         session: AsyncSession = Depends(db_helper.get_async_session)
+# ):
+#     user = await get_user_by_username(session, user_in.username)
+#     if user is not None:
+#         raise HTTPException(
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#             detail={"error_code": "username_already_taken",
+#                     "message": "The username is already taken. Please choose a different one."}
+#         )
+#
+#     new_user = await create_user(session=session, user_in=user_in)
+#     return new_user
+
+
 @router.post(
     "/register",
     response_model=UserResponseSchema,
@@ -41,14 +62,19 @@ async def register(
         session: AsyncSession = Depends(db_helper.get_async_session)
 ):
     user = await get_user_by_username(session, user_in.username)
-    if user is not None:
+    if user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={"error_code": "username_already_taken",
                     "message": "The username is already taken. Please choose a different one."}
         )
 
-    new_user = await create_user(session=session, user_in=user_in)
+    result = await session.execute(select(UserORM))
+    users_count = len(result.scalars().all())
+
+    is_admin = users_count == 0
+
+    new_user = await create_user(session=session, user_in=user_in, is_admin=is_admin)
     return new_user
 
 

@@ -11,10 +11,10 @@ async def get_user_by_username(session: AsyncSession, username: str) -> UserORM 
     return await session.scalar(stmt)
 
 
-async def create_user(session: AsyncSession, user_in: RegisterSchema) -> UserORM:
+async def create_user(session: AsyncSession, user_in: RegisterSchema, is_admin: bool) -> UserORM:
     hashed_password = hash_password(user_in.password)
     user_in.password = hashed_password
-    user = UserORM(username=user_in.username, hashed_password=user_in.password)
+    user = UserORM(username=user_in.username, hashed_password=user_in.password, is_admin=is_admin)
     session.add(user)
     await session.commit()
     # session.refresh(user)
