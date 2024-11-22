@@ -62,3 +62,6 @@ docker compose up --build
 
 4. Open this URL in your browser to start interacting with the application: [http://localhost:5173/]()
 
+### Demo
+
+![Demo](demo.gif)
